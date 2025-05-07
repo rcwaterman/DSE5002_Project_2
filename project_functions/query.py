@@ -9,7 +9,7 @@ class Query():
         """
         Take in the database connection and set an internal attribute to the connection.
         """
-        self.connection = connection
+        self.engine = connection.engine
 
     def read_query(self, query:str, params=()):
         """
@@ -19,7 +19,7 @@ class Query():
         to changes in the connection parameters.
         """
         try:
-            return pd.read_sql_query(f"{query}",self.connection.engine, params=params)
+            return pd.read_sql_query(f"{query}",self.engine, params=params)
         except Exception as e:
             print(f"Error: {e}")
 

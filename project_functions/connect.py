@@ -16,33 +16,33 @@ class Connect():
     def connect(self, path:str):
         """
         Read in the credentials from 'path' and test the DB connection.
-
         """
         try:
-            self.creds = {}
+            creds = {}
             with open(path) as f:
                 for i, line in enumerate(f.readlines()):
                     if i==0:
-                        self.creds["user"]=line.strip()
+                        creds["user"]=line.strip()
                     else:
-                        self.creds["pass"]=line.strip()
+                        creds["pass"]=line.strip()
 
-            self._test_connection()
-
-            return self.engine
+            self.engine = self._test_connection(user=creds["user"], password=creds["pass"])
         
         except Exception as e:
             print(f"Error: {e}")
 
-    def _test_connection(self):
-        self.engine=f'postgresql://{self.creds["user"]}:{self.creds["pass"]}@{self.host}:{self.port}/{self.db}'
+    def _test_connection(self, user, password):
         try:
+            engine = f'postgresql://{user}:{password}@{self.host}:{self.port}/{self.db}'
+
             pd.read_sql_query("""
                               SELECT * 
                               FROM INFORMATION_SCHEMA.TABLES
                               """
-                        ,self.engine)
-            print(f"User: {self.creds["user"]} successfully connected to {self.db}!")
+                        ,engine)
+            
+            print(f"User: {user} successfully connected to {self.db}!")
+            return engine
             
         except Exception as e:
             print(f"Error: {e}")

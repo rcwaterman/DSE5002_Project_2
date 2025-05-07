@@ -31,17 +31,21 @@ class Transaction():
             max_date = f'{year}-{month}-{max_day} 00:00:00'
 
             result = self.query.read_query(f"""
-                                    SELECT * 
+                                    SELECT *
                                     FROM transaction
                                     WHERE txn_date BETWEEN %s AND %s
-                                """, params=(min_date, max_date))  
-            
-            assert len(result) > 0
-                
+                                """, params=(min_date, max_date)).drop("account_id", axis=1)
+
+            #Assert that the result must have more than one value, and raise an error otherwise
+            assert len(result) > 0, "The entered date is invalid."
+
+            result["txn_date"].astype(dtype="datetime64[ns]")
+
             return result
         
         except Exception as e:
             # return the invalid df
+            print(f'Error: {e}')
             return self.invalid_df
 
     def _validate_transaction_connection(self):
@@ -62,7 +66,8 @@ class Transaction():
             self.invalid_df = {}
             
             for col in result.columns:
-                self.invalid_df[col]=[-1]
+                if col != "account_id":
+                    self.invalid_df[col]=[-1]
         
             self.invalid_df = pd.DataFrame(self.invalid_df)
 
