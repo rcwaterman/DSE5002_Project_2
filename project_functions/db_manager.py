@@ -20,11 +20,17 @@ class DBManager():
         """
         Plot the transaction amount by date. Utilize data retreived by the transaction class.
         """
+        #Use the private method to retreive the transaction data
         transaction_data = self._retreive_transactions(month, year)
 
+        #Group and aggregate data
         transaction_data = transaction_data[["txn_date","amount"]].groupby("txn_date").sum()
 
-        barplot(transaction_data, x="txn_date", y="amount")
+        #Create the plot and assign titles 
+        plot = barplot(transaction_data, x="txn_date", y="amount")
+        plot.set_title(label="Sum of Transaction Amount by Date")
+        plot.set_ylabel("Sum of Transaction Amount (in USD)")
+        plot.set_xlabel("Transaction Date")
 
     def _retreive_transactions(self, month:str, year:str):
         """

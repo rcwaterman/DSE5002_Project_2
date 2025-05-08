@@ -7,7 +7,7 @@ class Query():
     """
     def __init__(self, connection:Connect):
         """
-        Take in the database connection and set an internal attribute to the connection.
+        Take in the database connection engine and set it as an attribute.
         """
         self.engine = connection.engine
 
